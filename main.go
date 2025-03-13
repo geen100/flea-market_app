@@ -27,11 +27,12 @@ func main() {
 	ItemController := controller.NewItemController(ItemService)
 
 	r := gin.Default()
-	r.GET("/items", ItemController.FindAll)
-	r.GET("/items/:id", ItemController.FindById)
-	r.POST("/items", ItemController.Create)
-	r.PUT("/items/:id", ItemController.Update)
-	r.DELETE("/items/:id", ItemController.Delete)
+	itemRouter := r.Group("/items")
+	itemRouter.GET("", ItemController.FindAll)
+	itemRouter.GET("/:id", ItemController.FindById)
+	itemRouter.POST("", ItemController.Create)
+	itemRouter.PUT("/:id", ItemController.Update)
+	itemRouter.DELETE("/:id", ItemController.Delete)
 	r.Run(":8082")
 
 }
