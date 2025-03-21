@@ -26,7 +26,7 @@ func main() {
 	ItemService := services.NewItemServices(itemRepository)
 	ItemController := controller.NewItemController(ItemService)
 
-	authRepository :=repository.NewAuthRepository(db)
+	authRepository := repository.NewAuthRepository(db)
 	authService := services.NewAuthService(authRepository)
 	authController := controller.NewAuthController(authService)
 
@@ -40,7 +40,8 @@ func main() {
 	itemRouter.PUT("/:id", ItemController.Update)
 	itemRouter.DELETE("/:id", ItemController.Delete)
 
-	authRouter.POST("/signup",authController.Signup)
+	authRouter.POST("/signup", authController.Signup)
+	authRouter.POST("/login", authController.Login)
 	r.Run(":8082")
 
 }

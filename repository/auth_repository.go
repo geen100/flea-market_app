@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"errors"
 	"gin_fleamarket/models"
 
 	"gorm.io/gorm"
 )
 
 type IAuthRepository interface {
-	CreateUser(user models.User)error
+	CreateUser(user models.User) error
+	FindUser(email string) (*models.User, error)
 }
 
 type AuthRepository struct {
@@ -18,10 +20,23 @@ func NewAuthRepository(db *gorm.DB) IAuthRepository {
 	return &AuthRepository{db: db}
 }
 
-func (r *AuthRepository)CreateUser(user models.User)error{
+func (r *AuthRepository) CreateUser(user models.User) error {
 	result := r.db.Create(&user)
-	if result.Error != nil{
+	if result.Error != nil {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *AuthRepository) FindUser(email string) (*models.User, error) {
+	var user models.User
+	result := r.db.First(&user, "email=?", email)
+	if result.Error != nil {
+		if result.Error.Error() == "recoud not found" {
+			return nil, errors.New("user not found")
+		}
+		return nil, result.Error
+	}
+	return &user, nil
+
 }

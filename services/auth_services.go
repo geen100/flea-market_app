@@ -9,6 +9,7 @@ import (
 
 type IAuthService interface {
 	Signup(email string, password string) error
+	Login(email string, password string) (*string, error)
 }
 
 type AuthService struct {
@@ -30,4 +31,18 @@ func (s *AuthService) Signup(email string, password string) error {
 		Password: string(hashdpassword),
 	}
 	return s.repository.CreateUser(user)
+}
+
+func (s *AuthService) Login(email string, password string) (*string, error) {
+	founduser, err := s.repository.FindUser(email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(founduser.Password), []byte(password))
+	if err != nil {
+		return nil, err
+	}
+	return &founduser.Email, nil
+
 }
